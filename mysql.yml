@@ -1,0 +1,6 @@
+- name: Automating Mysql Server configuration with Ansible Roles
+  hosts: DbServer
+  become: true
+  roles:
+  - mysql
+  

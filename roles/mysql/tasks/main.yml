@@ -1,0 +1,59 @@
+-   name: Installing Mysql Server
+    ansible.builtin.package:
+      name: mysql-server
+      state: present
+
+-   name: Starting the Mysql service
+    ansible.builtin.service:
+      name: mysqld
+      state: started
+
+-   name: Enabling the Mysql service
+    ansible.builtin.service:
+      name: mysqld
+      enabled: true
+
+-   name: Trying to set the root password
+    ansible.builtin.command: "mysql_secure_installation --set-root-pass {{ DBPass }}"
+    register: DBPassConfig
+    ignore_errors: true
+
+-   name: Checking Password Config
+    vars:
+    -   StdErrOrOutMsg: already set
+    ansible.builtin.debug:
+      msg: "DB password Set up already completed."
+    when: StdErrOrOutMsg in DBPassConfig.stderr or StdErrOrOutMsg in DBPassConfig.stdout
+
+-   name: FAILURE - DB PASSWORD Implementation ERROR
+    ansible.builtin.fail:
+      msg: "Implementing DB Password Failed with this Error STDErr-{{ DBPassConfig.stderr }}, STDOut-{{ DBPassConfig.stdout }}, Exit Status: {{ DBPassConfig.rc }}"
+    when: DBPassConfig.rc != 0
+
+-   name: SUCCESS - Implemented DB Password
+    ansible.builtin.debug:
+      msg: "Successfully implemented DB Password. Exit Status-{{ DBPassConfig.rc }}"
+    when: DBPassConfig.rc == 0
+
+-   name: Checking the DB Connectivity
+    ansible.builtin.command: "mysql -h {{ ansible_facts['default_ipv4']['address'] }} -u root -p{{ DBPass }} -e 'show databases;'"
+    register: DBConnectionConfig
+    ignore_errors: true
+
+-   name: DB Connection Success
+    ansible.builtin.debug:
+      msg: "DB Connectivity success. Please check the StdOut: {{ DBConnectionConfig.stdout }}"
+    when: DBConnectionConfig.rc == 0
+
+-   name: DB Connection FAILURE
+    ansible.builtin.fail:
+      msg: "Failure to get check connectivity. STDErr-{{ DBConnectionConfig.stderr }}, STDOut-{{ DBConnectionConfig.stdout }}, Exit Code-{{ DBConnectionConfig.rc }} "
+    when: DBConnectionConfig.rc != 0
+
+-   name: Gathering service facts
+    ansible.builtin.service_facts:
+
+-   name: Check if Mysql is running
+    debug:
+        msg: "Mysql is running. SUCCESSFULLY IMPLEMENTED DB SERVER"
+    when: ansible_facts.services['mysqld.service'].state == 'running'
