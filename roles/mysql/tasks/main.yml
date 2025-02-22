@@ -10,7 +10,7 @@
   ansible.builtin.package:
     name: mysql-server
     state: installed
-  
+
 - name: start and enable mysql server
   ansible.builtin.service:
     name: mysqld
@@ -21,12 +21,10 @@
   community.mysql.mysql_info:
     login_user: root
     login_password: "{{ DBPass }}"
-    login_host: "{{ ansible_facts['default_ipv4']['address'] }}"
+    login_host: "10.1.2.86"
   register: Output
   ignore_errors: true
 
 - name: Configuring Mysql DB
   ansible.builtin.command: "mysql_secure_installation --set-root-pass {{ DBPass }}"
-  when: Output.rc != 0
-
-  
+  when: Output.failed is true
