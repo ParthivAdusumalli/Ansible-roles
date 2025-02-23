@@ -1,0 +1,8 @@
+- name: Using Template module to do copy job effectivly
+  hosts: all
+  become: yes
+  tasks:
+  - name: Copying File 
+    ansible.builtin.template: 
+      src: NginxAdditionalConf.conf.j2
+      dest: /etc/nginx/default.d/{{ EnvName }}Config.conf

@@ -1,0 +1,13 @@
+- name: Copying Files Job
+  hosts: all
+  become: yes
+  tasks:
+  - name: Copying file to .101
+    ansible.builtin.copy: 
+      src: DevConfigFile.conf
+      dest: /etc/nginx/default.d/DevAdditionalConfig.conf
+
+  - name: Copying file to .201
+    ansible.builtin.copy: 
+      src: ProdConfigFile.conf
+      dest: /etc/nginx/default.d/ProdAdditionalConfig.conf

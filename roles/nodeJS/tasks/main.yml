@@ -1,0 +1,51 @@
+- name: Disabling NodeJs 
+  ansible.builtin.command: "dnf module disable nodejs -y"
+
+- name: Enabling NodeJS v20
+  ansible.builtin.command: "dnf module enable nodejs:20 -y"
+
+- name: Installing Node JS and Mysql
+  ansible.builtin.package:
+    name: "{{ item }}"
+  loop:
+  - nodejs
+  - mysql
+
+- name: Adding User expense
+  ansible.builtin.user:
+    name: expense
+    state: present
+    home: /home/expense
+    shell: /bin/bash
+
+- name: Creating App Directory
+  ansible.builtin.file:
+    path: /app
+    state: directory
+
+- name: Downloading Source Code
+  ansible.builtin.get_url:
+  url: "https://expense-builds.s3.us-east-1.amazonaws.com/expense-backend-v2.zip"
+  dest: "/tmp/backend.zip"
+
+- name: Extracting Zip file
+  ansible.builtin.unarchive:
+    src: /tmp/backend.zip
+    dest: /app
+  remote_src: true
+
+- name: installing NPM
+  ansible.builtin.command: "npm install --prefix /app"
+
+- name: Configuring Backend.service
+  ansible.builtin.template:
+    src: backend.service.j2
+    dest: /etc/systemd/system/backend.service
+  notify: Reload Daemon
+
+- name: Flushing Handler
+  meta: flush_handlers  
+
+- name: Starting and Enabling backend Service
+  debug:
+    msg: "calling Handler to start and enable the backend Service"
