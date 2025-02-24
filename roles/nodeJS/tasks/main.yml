@@ -1,15 +1,16 @@
-- name: Disabling NodeJs 
+- name: Disabling NodeJs
   ansible.builtin.command: "dnf module disable nodejs -y"
 
 - name: Enabling NodeJS v20
   ansible.builtin.command: "dnf module enable nodejs:20 -y"
 
-- name: Installing Node JS and Mysql
+- name: Installing NodeJS and MySQL
   ansible.builtin.package:
     name: "{{ item }}"
+    state: present
   loop:
-  - nodejs
-  - mysql
+    - nodejs
+    - mysql
 
 - name: Adding User expense
   ansible.builtin.user:
@@ -25,45 +26,43 @@
 
 - name: Downloading Source Code
   ansible.builtin.get_url:
-  url: "https://expense-builds.s3.us-east-1.amazonaws.com/expense-backend-v2.zip"
-  dest: "/tmp/backend.zip"
+    url: "https://expense-builds.s3.us-east-1.amazonaws.com/expense-backend-v2.zip"
+    dest: "/tmp/backend.zip"
 
 - name: Extracting Zip file
   ansible.builtin.unarchive:
     src: /tmp/backend.zip
     dest: /app
-  remote_src: true
+    remote_src: yes  # FIXED ERROR
 
-- name: installing NPM
-  ansible.builtin.command: "npm install --prefix /app"
+- name: Installing NPM dependencies
+  community.general.npm: #See this New module. It will make NPM installs only once at /app location
+    path: /app  # FIXED ERROR
 
 - name: Configuring Backend.service
   ansible.builtin.template:
     src: backend.service.j2
     dest: /etc/systemd/system/backend.service
-  notify: "Reload Daemon"
-
-- name: Flushing Handler
-  meta: flush_handlers  
-
-- name: Starting and Enabling backend Service
-  debug:
-    msg: "calling Handler to start and enable the backend Service"
-  notify: "Start and enable Backend.service"
+  notify: Reload Daemon
 
 - name: Flushing Handler
   meta: flush_handlers
+
+- name: Starting and Enabling Backend Service
+  service:
+    name: backend
+    state: started
+    enabled: yes
 
 - name: Installing Python libraries
   ansible.builtin.pip:
     name: "{{ item }}"
     executable: pip3.9
   loop:
-  - cryptography
-  - pymysql
+    - cryptography
+    - pymysql
 
-
-- name: import mysql data
+- name: Import MySQL Data
   community.mysql.mysql_db:
     state: import
     name: all
@@ -73,6 +72,6 @@
     target: /app/schema/backend.sql
 
 - name: Restarting backend service
-  ansible.builtin.debug: 
-    msg: "Calling Handler to Restart the backend service"
-  notify: "Restarting Backend Service"
+  ansible.builtin.service:
+    name: backend
+    state: restarted

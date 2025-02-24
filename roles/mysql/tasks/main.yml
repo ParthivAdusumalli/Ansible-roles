@@ -3,8 +3,8 @@
     name: "{{ item }}"
     executable: pip3.9
   loop:
-  - cryptography
-  - PyMySQL
+  - cryptography #Installing cryptography module, this is also required and will be used by PyMySQL library
+  - PyMySQL #Installing Ansible modules to establish connection with Mysql
 
 - name: Installing Mysql
   ansible.builtin.package:
@@ -17,14 +17,14 @@
     state: started
     enabled: yes
 
-- name: Connecting to Mysql Server
+- name: Connecting to Mysql Server #Checking DB connectivity. It will fail if Connection was not established.
   community.mysql.mysql_info:
     login_user: root
     login_password: "{{ DBPass }}"
-    login_host: "10.1.2.86"
+    login_host: "{{ ansible_facts['default_ipv4']['address'] }}"
   register: Output
   ignore_errors: true
 
-- name: Configuring Mysql DB
+- name: Configuring Mysql DB 
   ansible.builtin.command: "mysql_secure_installation --set-root-pass {{ DBPass }}"
   when: Output.failed is true
