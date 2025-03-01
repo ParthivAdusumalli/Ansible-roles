@@ -10,8 +10,8 @@
 
 - name: Downloading {{ ComponentType }}Source Code 
   ansible.builtin.get_url: 
-  source: "https://expense-builds.s3.us-east-1.amazonaws.com/expense-{{ ComponentType }}-v2.zip"
-  dest: "{{ ZipPath }}"
+    url: "https://expense-builds.s3.us-east-1.amazonaws.com/expense-{{ ComponentType }}-v2.zip"
+    dest: "{{ ZipPath }}"
 
 - name: Unarchiving or extracting Source code
   ansible.builtin.unarchive:
