@@ -3,4 +3,4 @@ MYSQL_PASSWORD: ABC@123
 MYSQL_HOST: 10.1.2.219
 FolderName: /app
 ComponentType: backend
-
+ZipPath: "/tmp/backend.zip"
