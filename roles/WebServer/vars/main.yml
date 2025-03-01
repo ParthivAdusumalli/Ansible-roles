@@ -1,1 +1,3 @@
-NODEJS_IPADDRESS: IPADDRESSOFBACKEND
+NODEJS_IPADDRESS: 10.1.2.118
+FolderName: /usr/share/nginx/html
+ComponentType: frontend

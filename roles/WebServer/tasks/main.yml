@@ -7,23 +7,27 @@
     name: nginx
     state: started
     enabled: true
-- name: Removing HTML Directory recursivly
-  ansible.builtin.file:
-    path: /usr/share/nginx/html
-    state: absent
-- name: Creating Html directory
-  ansible.builtin.file:
-    path: /usr/share/nginx/html
-    state: directory
-- name: Installing Source Code
-  ansible.builtin.get_url: 
-    url: "https://expense-builds.s3.us-east-1.amazonaws.com/expense-frontend-v2.zip"
-    dest: /tmp/frontend.zip
-- name: unzipping Code 
-  ansible.builtin.unarchive:
-    src: /tmp/frontend.zip
-    dest: /usr/share/nginx/html
-    remote_src: yes
+- name: Including Common role
+  ansible.builtin.include_role:
+    name: common
+    tasks_from: main
+# - name: Removing HTML Directory recursivly
+#   ansible.builtin.file:
+#     path: /usr/share/nginx/html
+#     state: absent
+# - name: Creating Html directory
+#   ansible.builtin.file:
+#     path: /usr/share/nginx/html
+#     state: directory
+# - name: Installing Source Code
+#   ansible.builtin.get_url: 
+#     url: "https://expense-builds.s3.us-east-1.amazonaws.com/expense-frontend-v2.zip"
+#     dest: /tmp/frontend.zip
+# - name: unzipping Code 
+#   ansible.builtin.unarchive:
+#     src: /tmp/frontend.zip
+#     dest: /usr/share/nginx/html
+#     remote_src: yes
 - name: Configuring Nginx file
   ansible.builtin.template:
     src: ExpenseConf.j2

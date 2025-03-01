@@ -1,0 +1,20 @@
+- name: Removing {{ FolderName }} Directory
+  ansible.builtin.file:
+    path: "{{ FolderName }}"
+    state: absent
+
+- name: Creating new {{ FolderName }} directory
+  ansible.builtin.file:
+    path: "{{ FolderName }}"
+    state: directory
+
+- name: Downloading {{ ComponentType }}Source Code 
+  ansible.builtin.get_url: 
+  source: "https://expense-builds.s3.us-east-1.amazonaws.com/expense-{{ ComponentType }}-v2.zip"
+  dest: "/tmp/{{ ComponentType }}.zip"
+
+- name: Unarchiving or extracting Source code
+  ansible.builtin.unarchive:
+    source: "/tmp/{{ ComponentType }}.zip"
+    dest: "{{ FolderName }}"
+    remote_src: yes

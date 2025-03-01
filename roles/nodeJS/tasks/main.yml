@@ -19,21 +19,26 @@
     home: /home/expense
     shell: /bin/bash
 
-- name: Creating App Directory
-  ansible.builtin.file:
-    path: /app
-    state: directory
+- name: Including Common role
+  ansible.builtin.include_role:
+    name: common
+    tasks_from: main
 
-- name: Downloading Source Code
-  ansible.builtin.get_url:
-    url: "https://expense-builds.s3.us-east-1.amazonaws.com/expense-backend-v2.zip"
-    dest: "/tmp/backend.zip"
+# - name: Creating App Directory
+#   ansible.builtin.file:
+#     path: /app
+#     state: directory
 
-- name: Extracting Zip file
-  ansible.builtin.unarchive:
-    src: /tmp/backend.zip
-    dest: /app
-    remote_src: yes  # FIXED ERROR
+# - name: Downloading Source Code
+#   ansible.builtin.get_url:
+#     url: "https://expense-builds.s3.us-east-1.amazonaws.com/expense-backend-v2.zip"
+#     dest: "/tmp/backend.zip"
+
+# - name: Extracting Zip file
+#   ansible.builtin.unarchive:
+#     src: /tmp/backend.zip
+#     dest: /app
+#     remote_src: yes  # FIXED ERROR
 
 - name: Installing NPM dependencies
   community.general.npm: #See this New module. It will make NPM installs only once at /app location
