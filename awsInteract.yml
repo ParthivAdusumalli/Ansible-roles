@@ -1,0 +1,18 @@
+- name: Play 1 started
+  hosts: local
+  become: yes
+  connection: local
+  tasks:
+    - name: Launching servers
+      amazon.aws.ec2_instance:
+        name: "Ansible-Server"
+        region: "us-east-1"
+        key_name: "Ansiblekey"
+        vpc_subnet_id: "subnet-09c32cd18565bab0b"
+        instance_type: "t2.micro"
+        image_id: "ami-04b4f1a9cf54c11d0"
+        security_groups: ["default"]
+      register: ec2_info
+    - name: Printing Ec2-info
+      debug:
+        msg: "{{ ec2_info['instances']['private_ip_address'] }}"

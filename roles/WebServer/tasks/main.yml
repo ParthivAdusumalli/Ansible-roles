@@ -20,10 +20,10 @@
 #     path: /usr/share/nginx/html
 #     state: directory
 # - name: Installing Source Code
-#   ansible.builtin.get_url: 
+#   ansible.builtin.get_url:
 #     url: "https://expense-builds.s3.us-east-1.amazonaws.com/expense-frontend-v2.zip"
 #     dest: /tmp/frontend.zip
-# - name: unzipping Code 
+# - name: unzipping Code
 #   ansible.builtin.unarchive:
 #     src: /tmp/frontend.zip
 #     dest: /usr/share/nginx/html
