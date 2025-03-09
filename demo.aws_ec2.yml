@@ -1,10 +1,19 @@
 plugin: amazon.aws.aws_ec2
 regions:
   - us-east-1
+vars:
+- ansible_user: ec2-user
+vars_files:
+- ansible_passwords.yml
 filters:
   instance-state-name: running
-  "tag:Name": "!Ansible-Control"
+  "tag:Name": "webServer"
 hostnames:
   - private-ip-address
 compose:
   ansible_host: private_ip_address
+  # ansible_user: ubuntu
+  # ansible_ssh_private_key_file: /home/Micheal.L/Dev_env/CKDevEnv_AWSKey.pem
+  # ansible_ssh_password: 75@jU!09Bny
+  ansible_user: "{{ lookup('ansible.builtin.vars','ansible_user') }}"
+  ansible_ssh_password: "{{ lookup('ansible.builtin.vars','{{ ansible_password }}') }}"

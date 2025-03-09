@@ -1,0 +1,8 @@
+- name: Play 1 Started
+  hosts: all
+  become: yes
+  tasks:
+  - name: Task 1 of play 1 Started
+    ansible.builtin.package:
+      name: nginx
+      state: present
