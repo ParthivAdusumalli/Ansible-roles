@@ -5,7 +5,7 @@
   - name: Checking Username and Passwords
     ansible.builtin.debug:
       msg: "Username and Passwords are: {{ ansible_user }}, {{ ansible_password }}"
-  - name: Task 1 of play 1 Started
+  - name: Installing Nginx
     ansible.builtin.package:
       name: nginx
       state: present
