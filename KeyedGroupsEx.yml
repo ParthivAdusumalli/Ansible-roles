@@ -1,0 +1,51 @@
+- name: Playbook Starts
+  hosts: all
+  become: yes
+  tasks:
+  - name: Copying LogClearDown Script to Dev Servers
+    ansible.builtin.copy:
+      src: /home/ec2-user/DevLogClearDown.sh
+      dest: /home/ec2-user/DevEnvLogs/DevLogClearDown.sh
+      mode: '0755'  # Ensure script is executable
+    when: "'env_Dev' in group_names" 
+
+  - name: Copying LogClearDown Script to Prod Servers
+    ansible.builtin.copy:
+      src: /home/ec2-user/ProdLogClearDown.sh
+      dest: /home/ec2-user/ProdEnvLogs/ProdLogClearDown.sh
+      mode: '0755'  # Ensure script is executable
+    when: "'env_Prod' in group_names"
+
+  - name: Running ClearDown Scripts On Dev
+    ansible.builtin.command: bash DevLogClearDown.sh
+    args:
+      chdir: /home/ec2-user/DevEnvLogs
+    register: DevResult
+    when: "'env_Dev' in group_names" 
+
+  - name: Debug Message
+    ansible.builtin.debug:
+      msg: "{{ DevResult }}"
+
+  - name: Running Clear Down scripts on Prod
+    ansible.builtin.command: bash ProdLogClearDown.sh
+    args:
+      chdir: /home/ec2-user/ProdEnvLogs
+    register: ProdResult
+    when: "'env_Prod' in group_names"
+
+  - name: Debug Message
+    ansible.builtin.debug:
+      msg: "{{ ProdResult }}"
+  
+  - name: Restarting Nginx Service
+    ansible.builtin.service:
+      name: nginx
+      state: restarted
+    when: "'role_webServer' in group_names"
+  
+  - name: Restarting Application Service
+    ansible.builtin.service:
+      name: NodeApplication
+      state: restarted
+    when: "'role_AppServer' in group_names"

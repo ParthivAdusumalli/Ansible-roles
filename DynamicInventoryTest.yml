@@ -2,9 +2,6 @@
   hosts: all
   become: yes
   tasks:
-  - name: Checking Username and Passwords
-    ansible.builtin.debug:
-      msg: "Username and Passwords are: {{ ansible_user }}, {{ ansible_password }}"
   - name: Installing Nginx
     ansible.builtin.package:
       name: nginx

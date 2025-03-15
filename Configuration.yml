@@ -1,0 +1,37 @@
+- name: Play 1 Started
+  hosts: all
+  become: yes
+  tasks:
+  - name: Installing Nginx
+    ansible.builtin.package:
+      name: nginx
+      state: present
+    when: "'role_WebServer' in group_names"
+  - name: Creating Directory
+    ansible.builtin.file:
+      path: /home/ec2-user/ProdEnvLogs
+      state: directory
+    when: "'env_Prod' in group_names"
+  - name: Creating Directory for Dev
+    ansible.builtin.file:
+      path: /home/ec2-user/DevEnvLogs
+      state: directory
+    when: "'env_Dev' in group_names"
+  - name: Creating Log files 1
+    ansible.builtin.command: "touch -d 250101 /home/ec2-user/DevEnvLogs/Log1.log"
+    when: "'env_Dev' in group_names"
+  - name: Creating Log files 2
+    ansible.builtin.command: "touch -d 250201 /home/ec2-user/DevEnvLogs/Log2.log"
+    when: "'env_Dev' in group_names"
+  - name: Creating Log files 3
+    ansible.builtin.command: "touch -d 250301 /home/ec2-user/DevEnvLogs/Log3.log"
+    when: "'env_Dev' in group_names"
+  - name: Creating Log files 1 for Prod
+    ansible.builtin.command: "touch -d 250101 /home/ec2-user/ProdEnvLogs/Log1.log"
+    when: "'env_Prod' in group_names"
+  - name: Creating Log files 2 for Prod
+    ansible.builtin.command: "touch -d 250201 /home/ec2-user/ProdEnvLogs/Log2.log"
+    when: "'env_Prod' in group_names"
+  - name: Creating Log files 3 for Prod
+    ansible.builtin.command: "touch -d 250301 /home/ec2-user/ProdEnvLogs/Log3.log"
+    when: "'env_Prod' in group_names"

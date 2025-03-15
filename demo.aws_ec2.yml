@@ -1,19 +1,13 @@
-plugin: amazon.aws.aws_ec2
-regions:
-  - us-east-1
-vars:
-- ansible_username: ec2-user
-#vars_files:
-#- ansible_passwords.yml
-filters:
-  instance-state-name: running
-  "tag:Name": "webServer"
-hostnames:
-  - private-ip-address
+plugin: aws_ec2  
+regions:  
+  - us-east-1  # Change region as needed  
+filters:  
+  instance-state-name: running  
+keyed_groups:  
+  - key: tags.Env  
+    prefix: "env_"  
+  - key: tags.Role  
+    prefix: "role_"
+
 compose:
   ansible_host: private_ip_address
-  ansible_ssh_private_key_file: /home/ec2-user/Ansible-roles/privateKey.pem
-  #ansible_ssh_password: "{{ ansible_password }}"
-  ansible_user: "{{ ansible_username }}"
-  
-  
