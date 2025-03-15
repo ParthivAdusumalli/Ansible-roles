@@ -5,9 +5,9 @@ filters:
   instance-state-name: running  
 keyed_groups:  
   - key: tags.Env  
-    prefix: "env_"  
+    prefix: "env"  
   - key: tags.Role  
-    prefix: "role_"
+    prefix: "role"
 
 compose:
   ansible_host: private_ip_address
